@@ -17,7 +17,7 @@ else
 fi
         
 for dir in "$Path"/*/; do
-	find "$dir" -type f -atime +60 -exec stat stat --format="File: %n | Last Access: %x | Last Modified: %y | Created: %W | Owner: %U" {} \; >> /var/log/dlFilesScratch.log 2>&1 
+	find "$dir" -type f -atime +60 -exec stat --format="File: %n | Last Access: %x | Last Modified: %y | Created: %W | Owner: %U" {} \; >> /var/log/dlFilesScratch.log 2>&1 
 done
 
 
