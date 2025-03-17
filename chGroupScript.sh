@@ -36,7 +36,7 @@ echo "Starting script execution at $(date)" >> "$LogFile"
 #Exclude directories matching "chacha" or "chai-lab"
 for dir in "$Path"/*/; do
 
-	if [[ "$dir" != "$ChailabDir" ]]; then
+	if [[ "$(basename "$dir")" != "$ChailabDir" ]]; then
 		echo "Processing directory: $dir at $(date | awk '{printf "%s\n", $4}')" >> "$LogFile"
 		group_name=$(ls -ld "$dir" | awk '{print $4}')
         	chgrp -R "$group_name" "$dir"
