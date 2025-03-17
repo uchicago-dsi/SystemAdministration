@@ -33,7 +33,7 @@ touch "$LogFile"
 echo "Starting script execution at $(date)" >> "$LogFile"
 
 #Going through each directory inside of the projects/projects2 directory
-#Exclude directories matching "chacha" or "chai-lab"
+#Exclude directories matching any of our directories listed on line 14
 for dir in "$Path"/*/; do
 
 	if [[ "$(basename "$dir")" != "$ChailabDir" ]]; then
