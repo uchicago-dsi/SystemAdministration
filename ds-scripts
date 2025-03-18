@@ -1,0 +1,7 @@
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin 
+
+#Script for changing directory group ownership, running every day at 1 am 
+5 0 * * MON  root /etc/cron.daily/chGroupScript.sh 
+
+#Script to locate and delete files older than 60 days in scratch
+0 0 * * MON root /etc/cron.daily/dlFilesScratch.sh
