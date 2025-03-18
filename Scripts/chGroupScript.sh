@@ -18,11 +18,14 @@ ChailabDir="chai-lab"
 hostname=$(hostname)
 
 #Checking which server the script will be running
-#Depending of the server, the pasth changes
+#Depending of the server, the path changes
 if [ "$hostname" = "$HostnameCluster1" ]; then
 	Path="$PathProject1"
-else
+elif [ "$hostname" = HostnameCluster2 ]; then
 	Path="$PathProject2"
+else
+  #If the hostname is not listed among the defined clusters in line 14, the script will exit without displaying an error message
+  exit 0
 fi
 
 #Create a new log File for the ouput, with the day, month and year
