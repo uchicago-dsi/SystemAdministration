@@ -5,3 +5,6 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 #Script to locate and delete files older than 60 days in scratch, running every day at 12 am
 0 0 * * * root ([ "$(hostname)" == "cluster-storage2" || "$(hostname)" == "cluster-storage4" ]) && /etc/cron.daily/dlFilesScratch.sh
+
+#Script to set the memory limit to 50GB in scratch, running every day at 12 am
+0 0 * * MON root /etc/cron.daily/setMemScript.sh
