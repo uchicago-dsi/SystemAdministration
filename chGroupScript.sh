@@ -21,7 +21,7 @@ hostname=$(hostname)
 #Depending of the server, the path changes
 if [ "$hostname" = "$HostnameCluster1" ]; then
 	Path="$PathProject1"
-elif [ "$hostname" = HostnameCluster2 ]; then
+elif [ "$hostname" = "$HostnameCluster2" ]; then
 	Path="$PathProject2"
 else
   #If the hostname is not listed among the defined clusters in line 14, the script will exit without displaying an error message

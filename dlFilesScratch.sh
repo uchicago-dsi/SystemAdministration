@@ -22,7 +22,7 @@ hostname=$(hostname)
 #Depending of the server, the path changes
 if [ "$hostname" = "$ClusterScratch1" ]; then
 	Path="$PathScratch1"
-elif [ "$hostname" = "$ClusterScratch1" ]; then
+elif [ "$hostname" = "$ClusterScratch2" ]; then
 	Path="$PathScratch2"
 else
   #If the hostname is not listed among the defined clusters in line 14, the script will exit without displaying an error message
