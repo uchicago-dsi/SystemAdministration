@@ -1,0 +1,4 @@
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+#Script for getting all the users logged in, running every day
+* * * * * root /etc/cron.daily/lgUserInfo.sh
