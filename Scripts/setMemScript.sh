@@ -10,7 +10,7 @@
 script="setMemScript"
 
 #Define servers_path.txt path
-servers_paths="/root/SystemAdministration/server_paths.txt"
+servers_paths="/root/SystemAdministration/servers_paths.txt"
 
 #Getting the hostname of the server
 hostname=$(hostname)

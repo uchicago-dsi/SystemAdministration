@@ -2,18 +2,18 @@
 #To add a server to the list, follow the same structure:
 #hostname scriptName path
 #
-########Change Group Script - chGroupScript.sh#########
+########Change Group Script#########
 cluster-storage1 chGroupScript /tank/projects
 cluster-storage4 chGroupScript /tank/projects2
 #
-#########Delete File Scratch Script - dlFilesScratch.sh#########
+#########Delete File Scratch Script#########
 cluster-storage2 dlFilesScratch /tank/scratch
 cluster-storage4 dlFilesScratch /tank/scratch2
 #
-#########Set user quota Script - setMemScript.sh#########
+#########Set user quota Script#########
 cluster-storage2 setMemScript /tank/scratch
 cluster-storage4 setMemScript /tank/scratch2
 #
-#########Get a list of logged-in users on the login nodes - lgUserInfo.sh#########
+#########Get a list of logged-in users on the login nodes#########
 fe01 lgUserInfo /home/mehernandez/loginListUsersFe01.txt
 fe02 lgUserInfo /home/mehernandez/loginListUsersFe02.txt

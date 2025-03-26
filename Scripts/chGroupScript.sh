@@ -10,7 +10,7 @@
 script="chGroupScript"
 
 #Define servers_path.txt path
-servers_paths="/root/SystemAdministration/server_paths.txt"
+servers_paths="/root/SystemAdministration/servers_paths.txt"
 
 # Define directories to exclude
 ChailabDir="chai-lab"
