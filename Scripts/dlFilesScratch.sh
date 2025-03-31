@@ -37,8 +37,10 @@ touch "$LogFile"
 echo "Starting script execution at $(date)" >> "$LogFile"
 
 #Going through only the top-level files and folders inside of the scratch/scratch2 directory
+#Checking the modification date of each top-level dir.
+#If the dir is older than 60 days, delete it
 for dir in "$Path"/*/; do
-	find "$dir" -maxdepth 1 -mindepth 1 -type d -atime +60 -printf "%A+ | Type: %y | Path: %p | Owner: %u | *** has been deleted from the cluster ***\n" >> "$LogFile"
+	find "$dir" -maxdepth 0 -type d -mtime +60 -printf "%A+ | Type: %y | Path: %p | Owner: %u | *** has been deleted from the cluster ***\n" >> "$LogFile"
 done
 
 #Remove old log files (older than 7 days)
