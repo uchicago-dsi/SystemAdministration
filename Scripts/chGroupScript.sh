@@ -1,15 +1,16 @@
 #!/bin/bash
 
-#"Author: Maria Hernandez
+#Author: Maria Hernandez
 #Email: mehernandez@uchicago.edu"
 
-# Define project paths
-PathProject1="/tank/projects"
-PathProject2="/tank/projects2"
+# Description: Change the group ownership of directories within the file system to the correct group that belongs
+# Scheduled to run every Monday.
 
-# Define cluster hostnames
-HostnameCluster1="cluster-storage1"
-HostnameCluster2="cluster-storage4"
+#Define the name of the script
+script="chGroupScript"
+
+#Define servers_path.txt path
+servers_paths="/root/SystemAdministration/servers_paths.txt"
 
 # Define directories to exclude
 ChailabDir="chai-lab"
@@ -17,12 +18,14 @@ ChailabDir="chai-lab"
 #Getting the hostname of the server
 hostname=$(hostname)
 
-#Checking which server the script will be running
-#Depending of the server, the pasth changes
-if [ "$hostname" = "$HostnameCluster1" ]; then
-	Path="$PathProject1"
-else
-	Path="$PathProject2"
+#Determine the server where the script is running
+#Set the directory path based on the server
+#server names and path directories: servers_paths.txt
+Path=$(grep "^$hostname $script" "$servers_paths" | awk '{print $3}')
+
+#If the hostname is not on the list, exit the code
+if [ -z "$Path" ]; then
+  exit 0
 fi
 
 #Create a new log File for the ouput, with the day, month and year
