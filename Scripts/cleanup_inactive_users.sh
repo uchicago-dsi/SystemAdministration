@@ -10,17 +10,24 @@
 
 # Configuration
 CUTOFF_DAYS=60
-DRY_RUN=false  # Set to true for testing (no deletions)
+DRY_RUN=true  # Set to true for testing (no deletions)
+LOG_FILE="/var/log/cleanup_inactive_users.log"
 
 log() {
   local message="$1"
   local timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-  echo "[$timestamp] $message"
+  echo "[$timestamp] $message" | tee -a "$LOG_FILE"
 }
 
-log "Starting optimized inspection of inactive directories in /tank/scratch (DRY RUN MODE)"
-log "Cutoff period: $CUTOFF_DAYS days"
-log "NOTE: No directories will be deleted in this dry run"
+if [ "$DRY_RUN" = true ]; then
+  log "Starting optimized inspection of inactive directories in /tank/scratch (DRY RUN MODE)"
+  log "Cutoff period: $CUTOFF_DAYS days"
+  log "NOTE: No directories will be deleted in this dry run"
+else
+  log "Starting cleanup of inactive directories in /tank/scratch (LIVE MODE)"
+  log "Cutoff period: $CUTOFF_DAYS days"
+  log "WARNING: This will actually delete directories!"
+fi
 
 # Calculate the cutoff timestamp in seconds since epoch
 CURRENT_TIME=$(date +%s)
@@ -46,12 +53,8 @@ check_directory_activity() {
     log "Found at least one file with more recent access time than the directory itself"
     
     # Update the directory's atime to reflect activity (even though it's not the most recent)
-    if [ "$DRY_RUN" = false ]; then
-      touch -a "$dir"
-      log "Updated atime for $dir"
-    else
-      log "Would update atime for $dir (skipped in dry run)"
-    fi
+    touch -a "$dir"
+    log "Updated atime for $dir"
     
     found_recent=0  # Recent activity found
   fi
@@ -63,12 +66,6 @@ check_directory_activity() {
 find "/tank/scratch" -mindepth 1 -maxdepth 1 -type d -print0 | while IFS= read -r -d $'\0' user_dir; do
   user=$(basename "$user_dir")
   log "Processing user directory: $user"
-  
-  # Check if we have permission to read the directory
-  if [ ! -r "$user_dir" ]; then
-    log "WARNING: No read permission for $user_dir - skipping"
-    continue
-  fi
 
   # Get the directory's own atime
   dir_atime=$(stat -c '%X' "$user_dir" 2>/dev/null)
@@ -80,7 +77,11 @@ find "/tank/scratch" -mindepth 1 -maxdepth 1 -type d -print0 | while IFS= read -
   # Check if the directory's own atime is recent enough
   if [ "$dir_atime" -ge "$CUTOFF_TIME" ]; then
     days_ago=$(( (CURRENT_TIME - dir_atime) / 86400 ))
-    log "WOULD KEEP: $user_dir - directory atime is $days_ago days ago (within $CUTOFF_DAYS day threshold)"
+    if [ "$DRY_RUN" = true ]; then
+      log "WOULD KEEP: $user_dir - directory atime is $days_ago days ago (within $CUTOFF_DAYS day threshold)"
+    else
+      log "KEEPING: $user_dir - directory atime is $days_ago days ago (within $CUTOFF_DAYS day threshold)"
+    fi
     continue
   fi
   
@@ -91,12 +92,29 @@ find "/tank/scratch" -mindepth 1 -maxdepth 1 -type d -print0 | while IFS= read -
   if check_directory_activity "$user_dir" "$dir_atime"; then
     # No recent activity found, directory should be deleted
     days_ago=$(( (CURRENT_TIME - dir_atime) / 86400 ))
-    log "WOULD DELETE: $user_dir - no recent activity detected, last access was $days_ago days ago"
+    if [ "$DRY_RUN" = true ]; then
+      log "WOULD DELETE: $user_dir - no recent activity detected, last access was $days_ago days ago"
+    else
+      log "DELETING: $user_dir - no recent activity detected, last access was $days_ago days ago"
+      if rm -rf "$user_dir" 2>/dev/null; then
+        log "Successfully deleted $user_dir"
+      else
+        log "ERROR: Failed to delete $user_dir"
+      fi
+    fi
   else
     # Recent activity found, directory should be kept
-    log "WOULD KEEP: $user_dir - recent activity detected in subdirectories"
+    if [ "$DRY_RUN" = true ]; then
+      log "WOULD KEEP: $user_dir - recent activity detected in subdirectories"
+    else
+      log "KEEPING: $user_dir - recent activity detected in subdirectories"
+    fi
   fi
 done
 
-log "Inspection complete - run without DRY_RUN=true to perform actual deletions"
+if [ "$DRY_RUN" = true ]; then
+  log "Inspection complete - run without DRY_RUN=true to perform actual deletions"
+else
+  log "Cleanup process complete"
+fi
 exit 0
