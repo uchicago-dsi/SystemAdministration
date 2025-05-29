@@ -1,0 +1,7 @@
+/var/log/cleanup_inactive_users.log {
+  monthly     # rotate the logs monthly
+  compress    # gzip 
+  missingok   # Do not error if a log is missing
+  notifempty  # Do not rotate empty logs
+  maxage 180  # delete any rotate logs older than 180 days
+}
